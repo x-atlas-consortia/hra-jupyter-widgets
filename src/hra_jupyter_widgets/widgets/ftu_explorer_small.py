@@ -1,16 +1,16 @@
 import traitlets as tr
 
 from ._base import HraBaseWidget
+from ._stylesheets import Font, Material
 from ._traits import Attribute, Event
-from ._stylesheets import FONTS, MATERIAL
 
 
 class HraFtuExplorerSmallWidget(HraBaseWidget):
     _tag_name = "hra-ftu-ui-small"
     _scripts = ["https://cdn.humanatlas.io/ui/ftu-ui-small-wc/wc.js"]
     _styles = [
-        *FONTS,
-        *MATERIAL,
+        Font.Inter,
+        *Material,
         "https://cdn.humanatlas.io/ui/ftu-ui-small-wc/styles.css",
     ]
 
@@ -19,7 +19,7 @@ class HraFtuExplorerSmallWidget(HraBaseWidget):
         attribute_name="base-href",
     )
 
-    selected_illustration = Attribute(tr.Unicode(), help="")
+    selected_illustration = Attribute(tr.Unicode(), required=True, help="")
     illustrations = Attribute(tr.Unicode(None, allow_none=True), help="")
     summaries = Attribute(
         tr.Unicode("assets/TEMP/ftu-cell-summaries.jsonld", read_only=True), help=""
