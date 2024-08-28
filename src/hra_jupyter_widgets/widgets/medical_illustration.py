@@ -9,8 +9,8 @@ class HraMedicalIllustrationWidget(HraBaseWidget):
     _scripts = ["https://cdn.humanatlas.io/ui/medical-illustration/wc.js"]
     _styles = ["https://cdn.humanatlas.io/ui/medical-illustration/styles.css"]
 
-    selected_illustration = Attribute(tr.Unicode(), help="")
-    illustrations = Attribute(tr.Unicode(), help="")
+    selected_illustration = Attribute(tr.Unicode(), required=True, help="")
+    illustrations = Attribute(tr.Unicode(), required=True, help="")
     highlight = Attribute(tr.Unicode(allow_none=True), help="")
 
     on_cell_click = Event()
