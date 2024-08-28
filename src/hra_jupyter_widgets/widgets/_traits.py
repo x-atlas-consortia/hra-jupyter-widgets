@@ -15,10 +15,13 @@ class Attribute(tr.TraitType[G, S]):
     def __new__(
         cls: type[Attribute[G, S]],
         trait: tr.TraitType[G, S],
+        *,
         attribute_name: str | None = None,
+        required=False,
         help: str | None = None,
     ) -> tr.TraitType[G, S]:
         trait.metadata["type"] = HraTraitType.Attribute
+        trait.metadata["required"] = required
         trait.metadata["sync"] = True
 
         if attribute_name:
@@ -136,7 +139,5 @@ class ModelEvents(_Bindings):
     def _create_binding(self, key: str, trait: tr.TraitType) -> dict[str, t.Any]:
         return {
             EventBindingKey.EventName: get_trait_event_name(trait, key),
-            EventBindingKey.Properties: trait.metadata.get(
-                EventBindingKey.Properties
-            ),
+            EventBindingKey.Properties: trait.metadata.get(EventBindingKey.Properties),
         }

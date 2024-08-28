@@ -8,7 +8,7 @@ import anywidget
 import ipywidgets
 import traitlets as tr
 
-from ._constants import ModelKey
+from ._constants import HraTraitType, ModelKey
 from ._traits import EventHandler, ModelAttributes, ModelEvents
 
 
@@ -25,6 +25,7 @@ class HraBaseWidget(anywidget.AnyWidget):
     def __init__(self, *args, **kwargs) -> None:
         self.add_traits(**self._create_model_traits())
         self.on_msg(self._handle_event)
+        self._ensure_required_attributes(kwargs)
         super().__init__(*args, **kwargs)
 
     def register_event_handler(
@@ -36,6 +37,12 @@ class HraBaseWidget(anywidget.AnyWidget):
         keys = [ModelKey.TagName, ModelKey.Scripts, ModelKey.Styles]
         to_trait = lambda key: tr.Any(getattr(self, key)).tag(sync=True)
         return {key: to_trait(key) for key in keys}
+
+    def _ensure_required_attributes(self, kwargs: dict[str, t.Any]) -> None:
+        required = self.trait_names(type=HraTraitType.Attribute, required=True)
+        missing = [name for name in required if name not in kwargs]
+        if missing:
+            raise ValueError(f"Missing required arguments: {missing}")
 
     def _handle_event(self, _widget: t.Any, content: t.Any, _buffers: t.Any) -> None:
         if isinstance(content, dict) and "event" in content:
