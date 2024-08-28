@@ -1,50 +1,42 @@
 from __future__ import annotations
 
+import collections
 import pathlib
+import typing as t
 
 import anywidget
-import traitlets
+import ipywidgets
+import traitlets as tr
 
-_root_path = pathlib.Path(__file__).parent.parent
+from ._constants import ModelKey
+from ._traits import EventHandler, ModelAttributes, ModelEvents
 
 
-class HraWidgetBase(anywidget.AnyWidget):
-    _esm = _root_path / "static" / "widget.js"
-    _css = _root_path / "static" / "widget.css"
+class HraBaseWidget(anywidget.AnyWidget):
+    _esm = pathlib.Path(__file__).resolve().parent.parent / "static" / "hra_app.js"
 
-    _application = traitlets.Dict().tag(sync=True)
+    _attributes = ModelAttributes().tag(sync=True)
+    _events = ModelEvents().tag(sync=True)
+    _event_dispatchers = tr.Instance(
+        collections.defaultdict,
+        (ipywidgets.CallbackDispatcher,),
+    )
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
+        self.add_traits(**self._create_model_traits())
+        self.on_msg(self._handle_event)
         super().__init__(*args, **kwargs)
-        self._application = {
-            "tag_name": self.__get_tag_name(),
-            "scripts": self.__get_scripts(),
-            "styles": self.__get_styles(),
-            "inputs": self.__get_inputs(),
-            "outputs": self.__get_outputs(),
-        }
 
-        missing_inputs = []
-        for name in self.traits(type="input", required=True):
-            if name not in kwargs:
-                missing_inputs.append(name)
+    def register_event_handler(
+        self, event: str, handler: EventHandler, remove=False
+    ) -> None:
+        self._event_dispatchers[event].register_callback(handler, remove)
 
-        if missing_inputs:
-            print("Missing values for required inputs:", missing_inputs)
+    def _create_model_traits(self) -> dict[str, tr.TraitType]:
+        keys = [ModelKey.TagName, ModelKey.Scripts, ModelKey.Styles]
+        to_trait = lambda key: tr.Any(getattr(self, key)).tag(sync=True)
+        return {key: to_trait(key) for key in keys}
 
-    def __get_tag_name(self) -> str:
-        return list(self.trait_values(type="tag_name").values())[0]
-
-    def __get_scripts(self) -> list[str]:
-        return list(self.trait_values(type="script").values())
-
-    def __get_styles(self) -> list[str]:
-        return list(self.trait_values(type="style").values())
-
-    def __get_inputs(self) -> dict[str, str]:
-        return {
-            name: trait.attribute for name, trait in self.traits(type="input").items()
-        }
-
-    def __get_outputs(self) -> list[str]:
-        return [trait.event_name for trait in self.traits(type="output").values()]
+    def _handle_event(self, _widget: t.Any, content: t.Any, _buffers: t.Any) -> None:
+        if isinstance(content, dict) and "event" in content:
+            self._event_dispatchers[content["event"]](content.get("data"))
