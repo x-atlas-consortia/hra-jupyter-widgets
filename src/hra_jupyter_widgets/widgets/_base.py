@@ -15,6 +15,7 @@ from ._traits import EventHandler, ModelAttributes, ModelEvents
 class HraBaseWidget(anywidget.AnyWidget):
     _esm = pathlib.Path(__file__).resolve().parent.parent / "static" / "hra_app.js"
 
+    _max_height = None
     _attributes = ModelAttributes().tag(sync=True)
     _events = ModelEvents().tag(sync=True)
     _event_dispatchers = tr.Instance(
@@ -34,7 +35,7 @@ class HraBaseWidget(anywidget.AnyWidget):
         self._event_dispatchers[event].register_callback(handler, remove)
 
     def _create_model_traits(self) -> dict[str, tr.TraitType]:
-        keys = [ModelKey.TagName, ModelKey.Scripts, ModelKey.Styles]
+        keys = [ModelKey.TagName, ModelKey.Scripts, ModelKey.Styles, ModelKey.MaxHeight]
         to_trait = lambda key: tr.Any(getattr(self, key)).tag(sync=True)
         return {key: to_trait(key) for key in keys}
 

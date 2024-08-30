@@ -10,6 +10,7 @@ class ModelKey(enum.StrEnum):
     TagName = "_tag_name"
     Scripts = "_scripts"
     Styles = "_styles"
+    MaxHeight = "_max_height"
     Attributes = "_attributes"
     Events = "_events"
 
