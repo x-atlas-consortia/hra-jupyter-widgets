@@ -1,17 +1,19 @@
-import traitlets as tr
+from traitlets import Unicode
 
 from ._base import HraBaseWidget
 from ._traits import Attribute, Event
 
+_DEFAULT_ILLUSTRATIONS = "https://cdn.humanatlas.io/digital-objects/graph/2d-ftu-illustrations/latest/assets/2d-ftu-illustrations.jsonld"
 
-class HraMedicalIllustrationWidget(HraBaseWidget):
+
+class MedicalIllustration(HraBaseWidget):
     _tag_name = "hra-medical-illustration"
     _scripts = ["https://cdn.humanatlas.io/ui/medical-illustration/wc.js"]
     _styles = ["https://cdn.humanatlas.io/ui/medical-illustration/styles.css"]
 
-    selected_illustration = Attribute(tr.Unicode(), required=True, help="")
-    illustrations = Attribute(tr.Unicode(), required=True, help="")
-    highlight = Attribute(tr.Unicode(allow_none=True), help="")
+    selected_illustration = Attribute(Unicode(), required=True, help="")
+    illustrations = Attribute(Unicode(_DEFAULT_ILLUSTRATIONS), help="")
+    highlight = Attribute(Unicode(None, allow_none=True), help="")
 
     on_cell_click = Event()
     on_cell_hover = Event()

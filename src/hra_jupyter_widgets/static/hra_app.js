@@ -15,6 +15,7 @@
  * @property {string} _tag_name
  * @property {string[]} _scripts
  * @property {string[]} _styles
+ * @property {string} _max_height
  * @property {AttributeBinding[]} _attributes
  * @property {EventBinding[]} _events
  */
@@ -155,6 +156,9 @@ async function render({ model, el }) {
 
   attributes.forEach((binding) => bindAttribute(model, instance, binding));
   events.forEach((binding) => bindEvent(model, instance, binding));
+
+  el.style.height = model.get('_max_height');
+  el.style.maxHeight = model.get('_max_height');
   el.appendChild(instance);
 
   await Promise.race([whenStable(instance), timeout(750)]);

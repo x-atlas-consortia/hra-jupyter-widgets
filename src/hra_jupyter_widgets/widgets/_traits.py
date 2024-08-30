@@ -58,6 +58,7 @@ class _EventWidget(t.Protocol):
 class Event(tr.TraitType[EventRegistry, EventRegistry]):
     def __init__(
         self,
+        *,
         event_name: str | None = None,
         properties: list[str] | None = None,
         help: str | None = None,
@@ -65,7 +66,7 @@ class Event(tr.TraitType[EventRegistry, EventRegistry]):
         super().__init__(allow_none=True, read_only=True, help=help)
         self.metadata["type"] = HraTraitType.Event
 
-        if event_name is not None:
+        if event_name:
             self.metadata[EventBindingKey.EventName] = event_name
 
         if properties is not None:

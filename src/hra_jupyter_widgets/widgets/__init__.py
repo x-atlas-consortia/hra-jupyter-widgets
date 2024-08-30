@@ -1,9 +1,15 @@
-from .ftu_explorer import HraFtuExplorerWidget
-from .ftu_explorer_small import HraFtuExplorerSmallWidget
-from .medical_illustration import HraMedicalIllustrationWidget
+from .eui import Eui
+from .eui_organ_information import EuiOrganInformation
+from .ftu_explorer import FtuExplorer
+from .ftu_explorer_small import FtuExplorerSmall
+from .medical_illustration import MedicalIllustration
+from .rui import Rui
 
 __all__ = [
-    "HraFtuExplorerWidget",
-    "HraFtuExplorerSmallWidget",
-    "HraMedicalIllustrationWidget",
+    "Eui",
+    "EuiOrganInformation",
+    "FtuExplorer",
+    "FtuExplorerSmall",
+    "MedicalIllustration",
+    "Rui",
 ]

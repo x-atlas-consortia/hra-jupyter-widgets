@@ -14,7 +14,7 @@ def get_trait_attribute_name(trait: tr.TraitType, key: str | None = None) -> str
         return trait.metadata[AttributeBindingKey.AttributeName]
     if key is None:
         key = trait.name or ""
-    return _snake_to_kebab_case(key)
+    return _snake_to_kebab_case(key).removeprefix('-')
 
 
 def get_trait_event_name(trait: tr.TraitType, key: str | None = None) -> str:
