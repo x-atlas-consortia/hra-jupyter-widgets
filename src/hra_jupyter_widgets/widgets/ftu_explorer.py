@@ -17,7 +17,8 @@ class FtuExplorer(HraBaseWidget):
     ]
     _styles = [
         Font.Inter,
-        *Material,
+        Material.Icons,
+        Material.Symbols,
         "https://cdn.humanatlas.io/ui/ftu-ui/styles.css",
     ]
 

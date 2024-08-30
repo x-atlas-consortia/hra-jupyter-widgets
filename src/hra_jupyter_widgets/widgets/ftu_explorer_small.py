@@ -14,7 +14,8 @@ class FtuExplorerSmall(HraBaseWidget):
     _scripts = ["https://cdn.humanatlas.io/ui/ftu-ui-small-wc/wc.js"]
     _styles = [
         Font.Inter,
-        *Material,
+        Material.Icons,
+        Material.Symbols,
         "https://cdn.humanatlas.io/ui/ftu-ui-small-wc/styles.css",
     ]
 

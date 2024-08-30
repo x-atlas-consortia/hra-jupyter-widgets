@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import collections.abc as abc
 import typing as t
 
 import traitlets as tr
@@ -41,7 +42,7 @@ class Attribute(tr.TraitType[G, S]):
         )
 
 
-EventHandler = t.Callable[[t.Any], None]
+EventHandler = abc.Callable[[t.Any], None]
 
 
 class EventRegistry(t.Protocol):
@@ -84,7 +85,7 @@ class Event(tr.TraitType[EventRegistry, EventRegistry]):
 
 
 class _Bindings(tr.List[dict[str, t.Any]]):
-    def default(self, obj: t.Any = None) -> t.List[dict[str, t.Any]]:
+    def default(self, obj: t.Any = None) -> tr.List[dict[str, t.Any]]:
         if not isinstance(obj, tr.HasTraits):
             return []
 
