@@ -43,7 +43,7 @@ class HraBaseWidget(anywidget.AnyWidget):
         required = self.trait_names(type=HraTraitType.Attribute, required=True)
         missing = [name for name in required if name not in kwargs]
         if missing:
-            raise ValueError(f"Missing required arguments: {missing}")
+            raise AttributeError(f"Missing required arguments: {missing}")
 
     def _handle_event(self, _widget: t.Any, content: t.Any, _buffers: t.Any) -> None:
         if isinstance(content, dict) and "event" in content:
