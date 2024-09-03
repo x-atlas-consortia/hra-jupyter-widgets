@@ -2,7 +2,7 @@
  * @typedef Context
  * @property {string | null} width
  * @property {string | null} height
- * @property {string | null} src
+ * @property {string | null} url
  * @property {DataView | null} data
  */
 
@@ -26,7 +26,8 @@ async function initialize() {
 }
 
 /**
- * Updates the value of a style property
+ * Updates the value of a style property.
+ * Removes the style if the value is null.
  *
  * @param {HTMLElement} el
  * @param {string} property
@@ -65,7 +66,7 @@ function updateSrc(model, viewerEl) {
     URL.revokeObjectURL(prev);
   }
 
-  const src = model.get('src');
+  const src = model.get('url');
   const data = model.get('data');
   if (src) {
     viewerEl.setAttribute('src', src);
@@ -87,13 +88,12 @@ async function render({ model, el }) {
 
   const viewerEl = document.createElement('model-viewer');
   viewerEl.classList.add('model-viewer');
+  viewerEl.setAttribute('camera-controls', '');
 
   const boundUpdateSrc = updateSrc.bind(null, model, viewerEl);
   boundUpdateSrc();
   model.on('change:src', boundUpdateSrc);
   model.on('change:data', boundUpdateSrc);
-
-  viewerEl.setAttribute('camera-controls', '');
 
   await new Promise((resolve, reject) => {
     viewerEl.addEventListener('load', resolve);
