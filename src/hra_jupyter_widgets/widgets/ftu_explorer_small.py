@@ -1,4 +1,4 @@
-from traitlets import Unicode
+from traitlets import Dict, Unicode
 
 from ._base import HraBaseWidget
 from ._stylesheets import Font, Material
@@ -21,10 +21,10 @@ class FtuExplorerSmall(HraBaseWidget):
 
     _base_href = Attribute(Unicode(_DEFAULT_BASE_HREF, read_only=True))
 
-    selected_illustration = Attribute(Unicode(None, allow_none=True), help="")
-    illustrations = Attribute(Unicode(None, allow_none=True), help="")
-    summaries = Attribute(Unicode(_DEFAULT_SUMMARIES), help="")
-    datasets = Attribute(Unicode(_DEFAULT_DATASETS), help="")
+    selected_illustration = Attribute(Unicode(None, allow_none=True) | Dict(), help="")
+    illustrations = Attribute(Unicode(None, allow_none=True) | Dict(), help="")
+    summaries = Attribute(Unicode(_DEFAULT_SUMMARIES) | Dict(), help="")
+    datasets = Attribute(Unicode(_DEFAULT_DATASETS) | Dict(), help="")
 
     on_illustration_selected = Event()
     on_cell_click = Event()

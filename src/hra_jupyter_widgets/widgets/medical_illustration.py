@@ -1,4 +1,4 @@
-from traitlets import Unicode
+from traitlets import Dict, Unicode
 
 from ._base import HraBaseWidget
 from ._traits import Attribute, Event
@@ -11,9 +11,9 @@ class MedicalIllustration(HraBaseWidget):
     _scripts = ["https://cdn.humanatlas.io/ui/medical-illustration/wc.js"]
     _styles = ["https://cdn.humanatlas.io/ui/medical-illustration/styles.css"]
 
-    selected_illustration = Attribute(Unicode(), required=True, help="")
-    illustrations = Attribute(Unicode(_DEFAULT_ILLUSTRATIONS), help="")
-    highlight = Attribute(Unicode(None, allow_none=True), help="")
+    selected_illustration = Attribute(Unicode() | Dict(), required=True, help="")
+    illustrations = Attribute(Unicode(_DEFAULT_ILLUSTRATIONS) | Dict(), help="")
+    highlight = Attribute(Unicode(None, allow_none=True) | Dict(), help="")
 
     on_cell_click = Event()
     on_cell_hover = Event()
