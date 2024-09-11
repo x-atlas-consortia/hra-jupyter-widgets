@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "hra_jupyter_widgets"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = ["anywidget"]
 readme = "README.md"
 requires-python = ">=3.9"
@@ -16,11 +16,11 @@ authors = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/hubmapconsortium/hra-jupyter-widgets"
-Documentation = "https://github.com/hubmapconsortium/hra-jupyter-widgets"
-Repository = "https://github.com/hubmapconsortium/hra-jupyter-widgets.git"
-Issues = "https://github.com/hubmapconsortium/hra-jupyter-widgets/issues"
-Changelog = "https://github.com/hubmapconsortium/hra-jupyter-widgets/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/x-atlas-consortia/hra-jupyter-widgets"
+Documentation = "https://github.com/x-atlas-consortia/hra-jupyter-widgets"
+Repository = "https://github.com/x-atlas-consortia/hra-jupyter-widgets.git"
+Issues = "https://github.com/x-atlas-consortia/hra-jupyter-widgets/issues"
+Changelog = "https://github.com/x-atlas-consortia/hra-jupyter-widgets/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 dev = ["watchfiles", "jupyterlab"]
