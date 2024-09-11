@@ -8,19 +8,16 @@ import traitlets as tr
 from ._constants import AttributeBindingKey, EventBindingKey, HraTraitType
 from ._utils import get_trait_attribute_name, get_trait_event_name
 
-G = t.TypeVar("G")
-S = t.TypeVar("S")
 
-
-class Attribute(tr.TraitType[G, S]):
+class Attribute(tr.TraitType):
     def __new__(
-        cls: type[Attribute[G, S]],
-        trait: tr.TraitType[G, S],
+        cls: type[Attribute],
+        trait: tr.TraitType,
         *,
         attribute_name: str | None = None,
         required=False,
         help: str | None = None,
-    ) -> tr.TraitType[G, S]:
+    ) -> tr.TraitType:
         trait.metadata["type"] = HraTraitType.Attribute
         trait.metadata["required"] = required
         trait.metadata["sync"] = True
@@ -56,7 +53,7 @@ class _EventWidget(t.Protocol):
     ) -> None: ...
 
 
-class Event(tr.TraitType[EventRegistry, EventRegistry]):
+class Event(tr.TraitType):
     def __init__(
         self,
         *,
@@ -84,8 +81,8 @@ class Event(tr.TraitType[EventRegistry, EventRegistry]):
         return register
 
 
-class _Bindings(tr.List[dict[str, t.Any]]):
-    def default(self, obj: t.Any = None) -> tr.List[dict[str, t.Any]]:
+class _Bindings(tr.List):
+    def default(self, obj: t.Any = None) -> tr.List:
         if not isinstance(obj, tr.HasTraits):
             return []
 
