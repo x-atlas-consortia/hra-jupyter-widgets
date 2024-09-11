@@ -2,9 +2,9 @@
 
 Changelog for the Human Reference Atlas (HRA) Jupyter Widgets
 
-## 0.1.1 - 2024-09-11
+## 0.1.1-0.1.4 - 2024-09-11
 
-### Added in 0.1.1
+### Added in 0.1.1-0.1.4
 
 - Fixed Python 3.9 support
 
