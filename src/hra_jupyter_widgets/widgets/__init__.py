@@ -1,3 +1,4 @@
+from .cde_visualization import CdeVisualization
 from .eui import Eui
 from .eui_organ_information import EuiOrganInformation
 from .ftu_explorer import FtuExplorer
@@ -8,6 +9,7 @@ from .node_dist_vis import NodeDistVis
 from .rui import Rui
 
 __all__ = [
+    "CdeVisualization",
     "Eui",
     "EuiOrganInformation",
     "FtuExplorer",
