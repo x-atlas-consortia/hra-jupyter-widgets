@@ -1,12 +1,12 @@
 from traitlets import Dict, Unicode
 
-from ._base import HraBaseWidget
-from ._traits import Attribute, Event
+from ..trait_types import Attribute, Event
+from .hra_app import HraAppWidget
 
 _DEFAULT_ILLUSTRATIONS = "https://cdn.humanatlas.io/digital-objects/graph/2d-ftu-illustrations/latest/assets/2d-ftu-illustrations.jsonld"
 
 
-class MedicalIllustration(HraBaseWidget):
+class MedicalIllustration(HraAppWidget):
     _tag_name = "hra-medical-illustration"
     _scripts = ["https://cdn.humanatlas.io/ui/medical-illustration/wc.js"]
     _styles = ["https://cdn.humanatlas.io/ui/medical-illustration/styles.css"]

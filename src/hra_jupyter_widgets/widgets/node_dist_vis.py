@@ -10,7 +10,7 @@ from ._traits import Attribute
 
 
 def _as_string_or_json(value, _widget) -> str:
-    return value if isinstance(value, str) else json.dumps(value)
+    return value if value is None or isinstance(value, str) else json.dumps(value)
 
 
 class NodeDistVis(HraBaseWidget):
