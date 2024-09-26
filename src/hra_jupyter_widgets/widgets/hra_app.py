@@ -13,7 +13,12 @@ from ..trait_types import Attribute, ElementDef, Event
 
 
 class HraAppWidget(anywidget.AnyWidget):
-    # TODO docs
+    """Base class for hra application widgets.
+
+    Attributes:
+        width (string): Width of the widget (css value).
+        height (string): Height of the widget (css value).
+    """
 
     _esm = pathlib.Path(__file__).resolve().parent.parent / "static" / "hra_app.js"
 
@@ -57,9 +62,9 @@ class HraAppWidget(anywidget.AnyWidget):
     def _element_default(self):
         return {
             "tag": self._tag_name,
-            "attributes": [trait.definition for trait in self.__attribute_traits],
+            "attributes": [trait._definition for trait in self.__attribute_traits],
             "styles": [],
-            "events": [trait.definition for trait in self.__event_traits],
+            "events": [trait._definition for trait in self.__event_traits],
         }
 
     @default("_meta_elements")
@@ -69,7 +74,10 @@ class HraAppWidget(anywidget.AnyWidget):
         return [*scripts, *styles]
 
     def __init__(self, **kwargs: t.Any) -> None:
-        # TODO docs
+        """Initializes the widget.
+        Ensures all required attributes are provided as arguments and
+        starts event processing.
+        """
 
         self.__check_required_attributes(kwargs)
         super().__init__(**kwargs)
@@ -81,7 +89,13 @@ class HraAppWidget(anywidget.AnyWidget):
         callback: t.Callable[[t.Any], t.Any],
         remove=False,
     ) -> None:
-        # TODO docs
+        """Register an event listener.
+
+        Args:
+            event_name (str): Event name.
+            callback (t.Callable[[t.Any], t.Any]): Listener function, called with the event data.
+            remove (bool, optional): Whether to remove the listener. Defaults to False.
+        """
 
         self._event_listeners[event_name].register_callback(callback, remove)
 
@@ -104,7 +118,11 @@ class HraAppWidget(anywidget.AnyWidget):
 
 
 class HraAppIframeWidget(HraAppWidget):
-    # TODO docs
+    """Base class for hra application widgets that renders
+    the application inside an iframe element for better isolation.
+
+    The iframe has a default height of 1000px.
+    """
 
     @default("_use_iframe")
     def _use_iframe_default(self) -> bool:

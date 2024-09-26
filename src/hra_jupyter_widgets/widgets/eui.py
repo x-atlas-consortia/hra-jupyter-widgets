@@ -11,6 +11,8 @@ _DEFAULT_THEME = "hubmap"
 
 
 class Eui(HraAppIframeWidget):
+    """Displays the HRA EUI application."""
+
     _tag_name = "ccf-eui"
     _scripts = ["https://cdn.humanatlas.io/ui/ccf-eui/wc.js"]
     _styles = [
@@ -24,10 +26,14 @@ class Eui(HraAppIframeWidget):
     # TODO: _logo_tooltip - Maybe set to empty string
     _login_disabled = Attribute(Bool(True, read_only=True))
 
-    data_sources = Attribute(List(Unicode(), default_value=_DEFAULT_DATA_SOURCES))
-    selected_organs = Attribute(List(Unicode()))
-    token = Attribute(Unicode(None, allow_none=True))
-    remote_api_endpoint = Attribute(Unicode(_DEFAULT_REMOTE_API_ENDPOINT))
-    theme = Attribute(Unicode(_DEFAULT_THEME))
-    header = Attribute(Bool(False))
-    filter = Attribute(Dict(default_value=None, allow_none=True))  # TODO improve type
+    data_sources = Attribute(
+        List(Unicode(), default_value=_DEFAULT_DATA_SOURCES), help="Data source urls."
+    )
+    selected_organs = Attribute(List(Unicode()), help="List of selected organs.")
+    token = Attribute(Unicode(None, allow_none=True), help="Api token.")
+    remote_api_endpoint = Attribute(
+        Unicode(_DEFAULT_REMOTE_API_ENDPOINT), help="Api endpoint url."
+    )
+    theme = Attribute(Unicode(_DEFAULT_THEME), help="Application theme.")
+    header = Attribute(Bool(False), help="Whether to display the header bar.")
+    filter = Attribute(Dict(default_value=None, allow_none=True), help="Data filter.")
