@@ -1,15 +1,15 @@
 from traitlets import Enum, List, Unicode
 
-from ._base import HraBaseWidget
+from ..trait_types import Attribute, Event
 from ._stylesheets import Font, Material
-from ._traits import Attribute, Event
+from .hra_app import HraAppWidget
 
 _DEFAULT_BASE_HREF = "https://cdn.humanatlas.io/ui/ccf-organ-info/"
 _DEFAULT_DATA_SOURCES = ["https://purl.humanatlas.io/collection/ds-graphs"]
 _DEFAULT_REMOTE_API_ENDPOINT = "https://apps.humanatlas.io/api"
 
 
-class EuiOrganInformation(HraBaseWidget):
+class EuiOrganInformation(HraAppWidget):
     _tag_name = "ccf-organ-info"
     _scripts = ["https://cdn.humanatlas.io/ui/ccf-organ-info/wc.js"]
     _styles = [
@@ -20,7 +20,6 @@ class EuiOrganInformation(HraBaseWidget):
 
     _base_href = Attribute(Unicode(_DEFAULT_BASE_HREF))
 
-    # organ_iri = Attribute(Unicode("http://purl.obolibrary.org/obo/UBERON_0002113"))
     organ_iri = Attribute(Unicode(), required=True)
     sex = Attribute(Enum(["Female", "Male"], default_value=None, allow_none=True))
     side = Attribute(Enum(["Left", "Right"], default_value=None, allow_none=True))

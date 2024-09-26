@@ -1,14 +1,14 @@
 from traitlets import Bool, Dict, Enum, List, Unicode
 
-from ._base import HraBaseWidget
+from ..trait_types import Attribute, Event
 from ._stylesheets import Font, Material
-from ._traits import Attribute, Event
+from .hra_app import HraAppIframeWidget
 
 _DEFAULT_BASE_HREF = "https://cdn.humanatlas.io/ui/ccf-rui/"
 _DEFAULT_THEME = "hubmap"
 
 
-class Rui(HraBaseWidget):
+class Rui(HraAppIframeWidget):
     _tag_name = "ccf-rui"
     _scripts = ["https://cdn.humanatlas.io/ui/ccf-rui/wc.js"]
     _styles = [
@@ -16,10 +16,9 @@ class Rui(HraBaseWidget):
         Material.Icons,
         "https://cdn.humanatlas.io/ui/ccf-rui/styles.css",
     ]
-    _max_height = "1000px"
 
     _base_href = Attribute(Unicode(_DEFAULT_BASE_HREF, read_only=True))
-    _skipUnsavedChangesConfirmation = Attribute(Bool(True, read_only=True))
+    _skip_unsaved_changes_confirmation = Attribute(Bool(True, read_only=True))
     # TODO: _logo_tooltip - Maybe set to empty string
 
     use_download = Attribute(Bool(False))

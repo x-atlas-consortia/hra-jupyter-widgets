@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import typing as t
 
-from traitlets import HasTraits, TraitType, Undefined, Union
+from traitlets import TraitType, Undefined, Union
 
 
 class Attribute(Union):
@@ -13,7 +13,7 @@ class Attribute(Union):
         if self.metadata["attribute_name"]:
             return self.metadata["attribute_name"]
         elif self.name:
-            return self.name.replace("_", "-")
+            return self.name.replace("_", "-").removeprefix("-")
         else:
             raise AttributeError("Cannot determine an attribute_name")
 
@@ -36,7 +36,7 @@ class Attribute(Union):
         help: str | None = None,
     ) -> None:
         super().__init__(
-            [trait],
+            trait.trait_types if isinstance(trait, Union) else [trait],
             default_value=default_value,
             allow_none=allow_none,
             read_only=read_only,

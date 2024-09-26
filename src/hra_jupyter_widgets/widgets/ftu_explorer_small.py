@@ -1,15 +1,15 @@
 from traitlets import Dict, Unicode
 
-from ._base import HraBaseWidget
+from .hra_app import HraAppIframeWidget
 from ._stylesheets import Font, Material
-from ._traits import Attribute, Event
+from ..trait_types import Attribute, Event
 
 _DEFAULT_BASE_HREF = "https://cdn.humanatlas.io/ui/ftu-ui-small-wc/"
 _DEFAULT_SUMMARIES = "assets/TEMP/ftu-cell-summaries.jsonld"
 _DEFAULT_DATASETS = "assets/TEMP/ftu-datasets.jsonld"
 
 
-class FtuExplorerSmall(HraBaseWidget):
+class FtuExplorerSmall(HraAppIframeWidget):
     _tag_name = "hra-ftu-ui-small"
     _scripts = ["https://cdn.humanatlas.io/ui/ftu-ui-small-wc/wc.js"]
     _styles = [

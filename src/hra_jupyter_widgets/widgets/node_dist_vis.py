@@ -5,22 +5,20 @@ import typing as t
 
 from traitlets import Integer, List, Unicode
 
-from ._base import HraBaseWidget
-from ._traits import Attribute
+from ..trait_types import Attribute
+from .hra_app import HraAppWidget
 
 
 def _as_string_or_json(value, _widget) -> str:
     return value if value is None or isinstance(value, str) else json.dumps(value)
 
 
-class NodeDistVis(HraBaseWidget):
+class NodeDistVis(HraAppWidget):
     _tag_name = "hra-node-dist-vis"
     _scripts = [
         "https://cdn.jsdelivr.net/gh/cns-iu/hra-node-dist-vis/docs/hra-node-dist-vis.wc.js"
     ]
     _styles = []
-
-    _max_height = "600px"
 
     nodes = Attribute(Unicode() | List(), required=True).tag(to_json=_as_string_or_json)
     node_target_key = Attribute(Unicode(), required=True)

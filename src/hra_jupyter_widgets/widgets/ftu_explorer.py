@@ -1,15 +1,15 @@
 from traitlets import Dict, Unicode
 
-from ._base import HraBaseWidget
+from ..trait_types import Attribute, Event
 from ._stylesheets import Font, Material
-from ._traits import Attribute, Event
+from .hra_app import HraAppIframeWidget
 
 _DEFAULT_BASE_HREF = "https://cdn.humanatlas.io/ui/ftu-ui/"
 _DEFAULT_SUMMARIES = "assets/TEMP/ftu-cell-summaries.jsonld"
 _DEFAULT_DATASETS = "assets/TEMP/ftu-datasets.jsonld"
 
 
-class FtuExplorer(HraBaseWidget):
+class FtuExplorer(HraAppIframeWidget):
     _tag_name = "hra-ftu-ui"
     _scripts = [
         "https://cdn.humanatlas.io/ui/ftu-ui/polyfills.js",
