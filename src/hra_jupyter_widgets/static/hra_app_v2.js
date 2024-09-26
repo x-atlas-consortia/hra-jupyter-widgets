@@ -47,7 +47,7 @@ function shared() {
   /** @type {(value: any) => any} */
   function serializeAttributeValue(value) {
     try {
-      if (typeof value === 'object') {
+      if (typeof value === 'object' && value !== null) {
         return JSON.stringify(value);
       }
     } catch {
@@ -61,25 +61,25 @@ function shared() {
   /** @type {(el: HTMLElement, name: string, value: any) => void} */
   function updateAttribute(el, name, value) {
     value = serializeAttributeValue(value);
-    if (value !== null) {
+    if (value !== null && value !== undefined) {
       el.setAttribute(name, value);
     } else {
       el.removeAttribute(name);
     }
   }
 
-  /** @type {(model: Model, def: AttributeDef) => any} */
-  function getInitialAttributeValue(model, def) {
+  /** @type {(model: Model, def: AttributeDef | StyleDef) => any} */
+  function getInitialValue(model, def) {
     const { key, value } = def;
-    const dynValue = key ? model.get(key) : null;
-    return dynValue ?? value;
+    const modelValue = key ? model.get(key) : null;
+    return modelValue ?? value;
   }
 
   /** @type {(el: HTMLElement, model: Model, def: AttributeDef) => void} */
   function initializeAttribute(el, model, def) {
     const { name, key } = def;
 
-    updateAttribute(el, name, getInitialAttributeValue(model, def));
+    updateAttribute(el, name, getInitialValue(model, def));
     if (key) {
       model.on(`change:${key}`, () => updateAttribute(el, name, model.get(key)));
     }
@@ -97,16 +97,10 @@ function shared() {
   /** @type {(el: HTMLElement, model: Model, def: StyleDef) => void} */
   function initializeStyle(el, model, def) {
     const { name, key } = def;
-    let value;
-    if (key) {
-      value = model.get(key);
-      model.on(`change:${key}`, () => updateStyle(el, name, model.get(key)));
-    }
 
-    value ??= def.value;
-    if (value !== null) {
-      updateStyle(el, name, value);
-      value = null; // Ensures value can be gc'd if captured by the change handler's closure
+    updateStyle(el, name, getInitialValue(model, def));
+    if (key) {
+      model.on(`change:${key}`, () => updateStyle(el, name, model.get(key)));
     }
   }
 
@@ -138,8 +132,8 @@ function shared() {
   function findElement(parent, model, def) {
     let selector = def.tag;
     def.attributes?.forEach((attrDef) => {
-      let value = getInitialAttributeValue(model, attrDef);
-      if (value !== null) {
+      let value = getInitialValue(model, attrDef);
+      if (value !== null && value !== undefined) {
         value = serializeAttributeValue(value);
         selector += `[${attrDef.name}="${value}"]`;
       }
@@ -191,7 +185,7 @@ function shared() {
   return {
     serializeAttributeValue,
     updateAttribute,
-    getInitialAttributeValue,
+    getInitialValue,
     initializeAttribute,
     updateStyle,
     initializeStyle,
