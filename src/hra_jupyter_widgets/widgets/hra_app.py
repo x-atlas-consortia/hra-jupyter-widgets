@@ -15,7 +15,7 @@ from ..trait_types import Attribute, ElementDef, Event
 class HraAppWidget(anywidget.AnyWidget):
     # TODO docs
 
-    _esm = pathlib.Path(__file__).resolve().parent.parent / "static" / "hra_app_v2.js"
+    _esm = pathlib.Path(__file__).resolve().parent.parent / "static" / "hra_app.js"
 
     _tag_name: t.ClassVar[str]
     _scripts: t.ClassVar[list[str]]
