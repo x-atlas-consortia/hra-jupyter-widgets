@@ -1,167 +1,275 @@
 /**
- * @typedef AttributeBinding
- * @property {string} attribute_name
- * @property {string} model_key
+ * @typedef AttributeDef
+ * @property {string} name
+ * @property {string?} [key]
+ * @property {unknown?} [value]
  */
 
 /**
- * @typedef EventBinding
- * @property {string} event_name
- * @property {string[] | null} properties
+ * @typedef StyleDef
+ * @property {string} name
+ * @property {string?} [key]
+ * @property {unknown?} [value]
+ */
+
+/**
+ * @typedef EventDef
+ * @property {string} name
+ * @property {string[]?} [keys]
+ */
+
+/**
+ * @typedef ElementDef
+ * @property {string} tag
+ * @property {AttributeDef[]?} [attributes]
+ * @property {StyleDef[]?} [styles]
+ * @property {EventDef[]?} [events]
  */
 
 /**
  * @typedef BaseContext
- * @property {string} _tag_name
- * @property {string[]} _scripts
- * @property {string[]} _styles
- * @property {string} _max_height
- * @property {AttributeBinding[]} _attributes
- * @property {EventBinding[]} _events
+ * @property {boolean?} [_use_iframe]
+ * @property {ElementDef} _element
+ * @property {ElementDef[]} _meta_elements
+ * @property {string?} width
+ * @property {string?} height
  */
-
-/** @typedef {BaseContext & Record<string, any>} Context */
-
-/** @typedef {import("npm:@anywidget/types").AnyModel<Context>} Model */
-
-/** @typedef {() => Element} MetadataElementFactory */
 
 /**
- * Creates and inserts a metadata element in the document `<head>`
- *
- * @param {MetadataElementFactory} factory Element factory function
- * @returns {Promise<Element>}
+ * @typedef {BaseContext & Record<string, any>} Context
  */
-function insertMetadata(factory) {
-  return new Promise((resolve, reject) => {
-    const el = factory();
-    el.addEventListener('load', () => resolve(el));
-    el.addEventListener('error', reject);
-    document.head.appendChild(el);
-  });
-}
 
 /**
- * Creates and inserts a metadata element if it doesn't already exist
- *
- * @param {string} selector
- * @param {MetadataElementFactory} factory
+ * @typedef {import("npm:@anywidget/types").AnyModel<Context>} Model
  */
-async function addMetadataOnce(selector, factory) {
-  return document.querySelector(selector) ?? (await insertMetadata(factory));
-}
 
-/**
- * Add a `<script>` tag to the document `<head>`
- *
- * @param {string} url
- */
-function addScriptOnce(url) {
-  return addMetadataOnce(`script[src="${url}"]`, () => {
-    const el = document.createElement('script');
-    el.src = url;
-    el.defer = true;
-    return el;
-  });
-}
-
-/**
- * Add a `<link>` tag to the document `<head>`
- *
- * @param {string} url
- */
-function addStyleOnce(url) {
-  return addMetadataOnce(`link[href="${url}"]`, () => {
-    const el = document.createElement('link');
-    el.href = url;
-    el.rel = 'stylesheet';
-    return el;
-  });
-}
-
-/**@type {import("npm:@anywidget/types").Initialize<Context>} */
-async function initialize({ model }) {
-  const scripts = model.get('_scripts').map(addScriptOnce);
-  const styles = model.get('_styles').map(addStyleOnce);
-  await Promise.all([...scripts, ...styles]);
-}
-
-/**
- * Bind an attribute value
- *
- * @param {Model} model
- * @param {HTMLElement} instance
- * @param {AttributeBinding} binding
- */
-function bindAttribute(model, instance, binding) {
-  const { attribute_name, model_key } = binding;
-  const update = () => {
-    const value = model.get(model_key);
-    if (value === null) {
-      instance.removeAttribute(attribute_name);
-    } else {
-      const valueStr = typeof value === 'string' ? value : JSON.stringify(value);
-      instance.setAttribute(attribute_name, valueStr);
+function shared() {
+  /** @type {(value: any) => any} */
+  function serializeAttributeValue(value) {
+    try {
+      if (typeof value === 'object' && value !== null) {
+        return JSON.stringify(value);
+      }
+    } catch {
+      console.warn('Unable to json encode attribute object', value);
+      return null;
     }
-  };
 
-  update();
-  model.on(`change:${model_key}`, update);
-}
-
-/**
- * Add an event listener
- *
- * @param {Model} model
- * @param {HTMLElement} instance
- * @param {EventBinding} binding
- */
-function bindEvent(model, instance, binding) {
-  const { event_name, properties } = binding;
-  instance.addEventListener(event_name, (e) => {
-    const obj = /** @type {Record<string, any>} */ (e);
-    const dataArray = (properties ?? ['detail']).map((prop) => obj[prop]);
-    const data = dataArray?.length === 1 ? dataArray[0] : dataArray;
-    model.send({ event: event_name, data });
-  });
-}
-
-/**
- * Wait until the custom element is stable (i.e. rendering done, etc.)
- *
- * @param {HTMLElement} instance
- */
-async function whenStable(instance) {
-  await customElements.whenDefined(instance.localName);
-  if ('whenStable' in instance && typeof instance.whenStable === 'function') {
-    await instance.whenStable();
+    return value;
   }
-}
 
-/**
- * Wait until `durationMs` milliseconds have elapsed
- *
- * @param {number} durationMs
- */
-async function timeout(durationMs) {
-  await new Promise((resolve) => setTimeout(resolve, durationMs));
+  /** @type {(el: HTMLElement, name: string, value: any) => void} */
+  function updateAttribute(el, name, value) {
+    value = serializeAttributeValue(value);
+    if (value !== null && value !== undefined) {
+      el.setAttribute(name, value);
+    } else {
+      el.removeAttribute(name);
+    }
+  }
+
+  /** @type {(model: Model, def: AttributeDef | StyleDef) => any} */
+  function getInitialValue(model, def) {
+    const { key, value } = def;
+    const modelValue = key ? model.get(key) : null;
+    return modelValue ?? value;
+  }
+
+  /** @type {(el: HTMLElement, model: Model, def: AttributeDef) => void} */
+  function initializeAttribute(el, model, def) {
+    const { name, key } = def;
+
+    updateAttribute(el, name, getInitialValue(model, def));
+    if (key) {
+      model.on(`change:${key}`, () => updateAttribute(el, name, model.get(key)));
+    }
+  }
+
+  /** @type {(el: HTMLElement, name: string, value: any) => void} */
+  function updateStyle(el, name, value) {
+    if (value !== null && value !== undefined) {
+      el.style.setProperty(name, `${value}`);
+    } else {
+      el.style.removeProperty(name);
+    }
+  }
+
+  /** @type {(el: HTMLElement, model: Model, def: StyleDef) => void} */
+  function initializeStyle(el, model, def) {
+    const { name, key } = def;
+
+    updateStyle(el, name, getInitialValue(model, def));
+    if (key) {
+      model.on(`change:${key}`, () => updateStyle(el, name, model.get(key)));
+    }
+  }
+
+  /** @type {(event: Record<string, unknown>, keys: string[] | null | undefined) => unknown} */
+  function selectEventData(event, keys) {
+    keys ??= ['detail'];
+    if (keys.length === 1) {
+      return event[keys[0]];
+    }
+
+    /** @type Record<string, unknown> */
+    const data = {};
+    for (const key of keys) {
+      data[key] = event[key];
+    }
+
+    return data;
+  }
+
+  /** @type {(el: HTMLElement, model: Model, def: EventDef) => void} */
+  function initializeEvent(el, model, def) {
+    const { name, keys } = def;
+    el.addEventListener(name, (event) => {
+      model.send({ event: name, data: selectEventData(/** @type {any} */ (event), keys) });
+    });
+  }
+
+  /** @type {(parent: HTMLElement, model: Model, def: ElementDef) => HTMLElement | null} */
+  function findElement(parent, model, def) {
+    let selector = def.tag;
+    def.attributes?.forEach((attrDef) => {
+      let value = getInitialValue(model, attrDef);
+      if (value !== null && value !== undefined) {
+        value = serializeAttributeValue(value);
+        selector += `[${attrDef.name}="${value}"]`;
+      }
+    });
+
+    return parent.querySelector(selector);
+  }
+
+  /** @type {(parent: HTMLElement, model: Model, def: ElementDef, once?: boolean) => HTMLElement} */
+  function initializeElement(parent, model, def, once = false) {
+    if (!def.tag) {
+      throw new Error('Bad element definition');
+    } else if (once) {
+      const el = findElement(parent, model, def);
+      if (el) {
+        return el;
+      }
+    }
+
+    const el = document.createElement(def.tag);
+    def.attributes?.forEach((attrDef) => initializeAttribute(el, model, attrDef));
+    def.styles?.forEach((styleDef) => initializeStyle(el, model, styleDef));
+    def.events?.forEach((eventDef) => initializeEvent(el, model, eventDef));
+    parent.appendChild(el);
+    return el;
+  }
+
+  /** @type {(el: HTMLElement) => Promise<void>} */
+  async function whenLoaded(el) {
+    await new Promise((res, rej) => {
+      el.addEventListener('load', res);
+      el.addEventListener('error', rej);
+    });
+  }
+
+  /** @type {(el: HTMLElement, timeout: number) => Promise<void>} */
+  async function whenStable(el, timeout) {
+    const timer = new Promise((res) => setTimeout(res, timeout));
+    const whenStableImpl = async () => {
+      await customElements.whenDefined(el.localName);
+      if ('whenStable' in el && typeof el.whenStable === 'function') {
+        await el.whenStable();
+      }
+    };
+
+    await Promise.race([whenStableImpl(), timer]);
+  }
+
+  return {
+    serializeAttributeValue,
+    updateAttribute,
+    getInitialValue,
+    initializeAttribute,
+    updateStyle,
+    initializeStyle,
+    selectEventData,
+    initializeEvent,
+    findElement,
+    initializeElement,
+    whenLoaded,
+    whenStable,
+  };
 }
 
 /** @type {import("npm:@anywidget/types").Render<Context>} */
-async function render({ model, el }) {
-  const tagName = model.get('_tag_name');
-  const attributes = model.get('_attributes');
-  const events = model.get('_events');
-  const instance = document.createElement(tagName);
+async function renderInline(context) {
+  const { initializeElement, whenLoaded, whenStable } = shared();
+  const { model, el } = context;
+  const { head } = document;
+  const promises = /** @type {Promise<any>[]} */ ([]);
 
-  attributes.forEach((binding) => bindAttribute(model, instance, binding));
-  events.forEach((binding) => bindEvent(model, instance, binding));
+  for (const def of model.get('_meta_elements')) {
+    const el = initializeElement(head, model, def, true);
+    promises.push(whenLoaded(el));
+  }
 
-  el.style.height = model.get('_max_height');
-  el.style.maxHeight = model.get('_max_height');
-  el.appendChild(instance);
+  const instance = initializeElement(el, model, model.get('_element'));
+  promises.push(whenStable(instance, 750));
 
-  await Promise.race([whenStable(instance), timeout(750)]);
+  await Promise.all(promises);
 }
 
-export default { initialize, render };
+/** @type {import("npm:@anywidget/types").Render<Context>} */
+async function renderIframe(context) {
+  const { initializeElement, whenLoaded } = shared();
+  const iframeTemplate = `<!DOCTYPE html>
+  <html>
+    <head>
+      <script>
+        ${shared.toString()}
+        ${renderInline.toString()}
+        globalThis.render = ${renderInline.name};
+      </script>
+    </head>
+    <body></body>
+  </html>`;
+  /** @type {ElementDef} */
+  const iframeElementDef = {
+    tag: 'iframe',
+    attributes: [
+      {
+        name: 'srcdoc',
+        value: iframeTemplate,
+      },
+    ],
+    styles: [
+      {
+        name: 'width',
+        key: 'width',
+      },
+      {
+        name: 'height',
+        key: 'height',
+      },
+      {
+        name: 'border',
+        value: 'none',
+      },
+    ],
+  };
+
+  const iframe = /** @type {HTMLIFrameElement} */ (initializeElement(context.el, context.model, iframeElementDef));
+  await whenLoaded(iframe);
+
+  const hraApp = /** @type {{render: typeof renderInline} & Window} */ (iframe.contentWindow);
+  await hraApp.render({
+    ...context,
+    el: iframe.contentDocument?.body ?? context.el,
+  });
+}
+
+/** @type {import("npm:@anywidget/types").Render<Context>} */
+async function render(context) {
+  const useIframe = context.model.get('_use_iframe') ?? false;
+  const impl = useIframe ? renderIframe : renderInline;
+  await impl(context);
+}
+
+export default { render };

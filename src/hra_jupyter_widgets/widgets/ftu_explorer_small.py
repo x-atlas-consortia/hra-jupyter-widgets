@@ -1,15 +1,17 @@
 from traitlets import Dict, Unicode
 
-from ._base import HraBaseWidget
+from ..trait_types import Attribute, Event
 from ._stylesheets import Font, Material
-from ._traits import Attribute, Event
+from .hra_app import HraAppIframeWidget
 
 _DEFAULT_BASE_HREF = "https://cdn.humanatlas.io/ui/ftu-ui-small-wc/"
 _DEFAULT_SUMMARIES = "assets/TEMP/ftu-cell-summaries.jsonld"
 _DEFAULT_DATASETS = "assets/TEMP/ftu-datasets.jsonld"
 
 
-class FtuExplorerSmall(HraBaseWidget):
+class FtuExplorerSmall(HraAppIframeWidget):
+    """Displays the small version of HRA FTU explorer."""
+
     _tag_name = "hra-ftu-ui-small"
     _scripts = ["https://cdn.humanatlas.io/ui/ftu-ui-small-wc/wc.js"]
     _styles = [
@@ -21,11 +23,23 @@ class FtuExplorerSmall(HraBaseWidget):
 
     _base_href = Attribute(Unicode(_DEFAULT_BASE_HREF, read_only=True))
 
-    selected_illustration = Attribute(Unicode(None, allow_none=True) | Dict(), help="")
-    illustrations = Attribute(Unicode(None, allow_none=True) | Dict(), help="")
-    summaries = Attribute(Unicode(_DEFAULT_SUMMARIES) | Dict(), help="")
-    datasets = Attribute(Unicode(_DEFAULT_DATASETS) | Dict(), help="")
+    selected_illustration = Attribute(
+        Unicode(None, allow_none=True) | Dict(),
+        help="Url, illustration id, or illustration object to display.",
+    )
+    illustrations = Attribute(
+        Unicode(None, allow_none=True) | Dict(),
+        help="Illustration objects used when an id is used to select an illustration.",
+    )
+    summaries = Attribute(
+        Unicode(_DEFAULT_SUMMARIES) | Dict(), help="Cell data summaries."
+    )
+    datasets = Attribute(Unicode(_DEFAULT_DATASETS) | Dict(), help="Data sources.")
 
-    on_illustration_selected = Event()
-    on_cell_click = Event()
-    on_cell_hover = Event()
+    on_illustration_selected = Event(
+        help="Event emitted when the user selects a different illustration."
+    )
+    on_cell_click = Event(help="Event emitted when a cell is clicked.")
+    on_cell_hover = Event(
+        help="Event emitted when a cell is hovered over. Emits None when the user stops hovering."
+    )

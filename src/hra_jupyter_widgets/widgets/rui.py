@@ -1,14 +1,16 @@
 from traitlets import Bool, Dict, Enum, List, Unicode
 
-from ._base import HraBaseWidget
+from ..trait_types import Attribute, Event
 from ._stylesheets import Font, Material
-from ._traits import Attribute, Event
+from .hra_app import HraAppIframeWidget
 
 _DEFAULT_BASE_HREF = "https://cdn.humanatlas.io/ui/ccf-rui/"
 _DEFAULT_THEME = "hubmap"
 
 
-class Rui(HraBaseWidget):
+class Rui(HraAppIframeWidget):
+    """Displays the HRA RUI application."""
+
     _tag_name = "ccf-rui"
     _scripts = ["https://cdn.humanatlas.io/ui/ccf-rui/wc.js"]
     _styles = [
@@ -16,31 +18,43 @@ class Rui(HraBaseWidget):
         Material.Icons,
         "https://cdn.humanatlas.io/ui/ccf-rui/styles.css",
     ]
-    _max_height = "1000px"
 
     _base_href = Attribute(Unicode(_DEFAULT_BASE_HREF, read_only=True))
-    _skipUnsavedChangesConfirmation = Attribute(Bool(True, read_only=True))
+    _skip_unsaved_changes_confirmation = Attribute(Bool(True, read_only=True))
     # TODO: _logo_tooltip - Maybe set to empty string
 
-    use_download = Attribute(Bool(False))
-    reference_data = Attribute(Unicode(None, allow_none=True))
-    user = Attribute(Dict(default_value=None, allow_none=True))  # TODO improve type
-    organ = Attribute(Dict(default_value=None, allow_none=True))  # TODO improve type
+    use_download = Attribute(Bool(False), help="Whether to download registrations.")
+    reference_data = Attribute(
+        Unicode(None, allow_none=True), help="Url to reference data."
+    )
+    user = Attribute(
+        Dict(default_value=None, allow_none=True), help="Preselected user."
+    )
+    organ = Attribute(
+        Dict(default_value=None, allow_none=True), help="Preselected organ."
+    )
     edit_registration = Attribute(
-        Dict(default_value=None, allow_none=True)
-    )  # TODO improve type
-    theme = Attribute(Unicode(_DEFAULT_THEME))
-    header = Attribute(Bool(False))
-    home_url = Attribute(Unicode(None, allow_none=True))  # TODO maybe empty string?
-    organ_options = Attribute(List(Unicode(), default_value=None, allow_none=True))
-    collisions_endpoint = Attribute(Unicode(None, allow_none=True))
-    view = Attribute(Enum(["register", "3d"], default_value=None, allow_none=True))
+        Dict(default_value=None, allow_none=True), help="Previous registrations."
+    )
+    theme = Attribute(Unicode(_DEFAULT_THEME), help="Application theme.")
+    header = Attribute(Bool(False), help="Whether to show the header bar.")
+    home_url = Attribute(Unicode(None, allow_none=True), help="Url of the home button.")
+    organ_options = Attribute(
+        List(Unicode(), default_value=None, allow_none=True), help="Organ options."
+    )
+    collisions_endpoint = Attribute(
+        Unicode(None, allow_none=True), help="Endpoint for collision queries."
+    )
+    view = Attribute(
+        Enum(["register", "3d"], default_value=None, allow_none=True), help="View mode."
+    )
     view_side = Attribute(
         Enum(
             ["left", "right", "anterior", "posterior"],
             default_value=None,
             allow_none=True,
-        )
+        ),
+        help="View side.",
     )
 
     # TODO: register - Turn into an output in ccf-rui
