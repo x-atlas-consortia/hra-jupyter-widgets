@@ -1,3 +1,4 @@
+from .body_ui import BodyUi
 from .cde_visualization import CdeVisualization
 from .eui import Eui
 from .eui_organ_information import EuiOrganInformation
@@ -9,6 +10,7 @@ from .node_dist_vis import NodeDistVis
 from .rui import Rui
 
 __all__ = [
+    "BodyUi",
     "CdeVisualization",
     "Eui",
     "EuiOrganInformation",
