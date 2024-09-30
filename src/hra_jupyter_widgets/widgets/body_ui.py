@@ -9,8 +9,8 @@ class BodyUi(HraAppWidget):
 
     _tag_name = "hra-body-ui"
     _scripts = [
-        "https://cdn.humanatlas.io/ui--staging/body-ui/polyfills.js",
-        "https://cdn.humanatlas.io/ui--staging/body-ui/main.js",
+        "https://cdn.humanatlas.io/ui/body-ui/polyfills.js",
+        "https://cdn.humanatlas.io/ui/body-ui/main.js",
     ]
     _styles = []
 
