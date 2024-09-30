@@ -11,6 +11,8 @@ def _as_string_or_json(value, _widget) -> str:
 
 
 class CdeVisualization(HraAppIframeWidget):
+    """Displays the CDE visualization application."""
+
     _tag_name = "cde-visualization"
     _scripts = [
         "https://cdn.humanatlas.io/ui/cde-visualization-wc/polyfills.js",

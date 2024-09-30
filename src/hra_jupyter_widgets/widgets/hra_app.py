@@ -63,7 +63,10 @@ class HraAppWidget(anywidget.AnyWidget):
         return {
             "tag": self._tag_name,
             "attributes": [trait._definition for trait in self.__attribute_traits],
-            "styles": [],
+            "styles": [
+                {"name": "width", "key": "width"},
+                {"name": "height", "key": "height"},
+            ],
             "events": [trait._definition for trait in self.__event_traits],
         }
 

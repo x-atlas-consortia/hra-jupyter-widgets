@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "hra_jupyter_widgets"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = ["anywidget", "traitlets>=5.10"]
 readme = "README.md"
 requires-python = ">=3.9"

@@ -2,6 +2,12 @@
 
 Changelog for the Human Reference Atlas (HRA) Jupyter Widgets
 
+## 0.4.0 - 2024-09-30
+
+### Added in 0.4.0
+
+- Added the HRA Body UI visualization
+
 ## 0.3.0 - 2024-09-27
 
 ### Added in 0.3.0
