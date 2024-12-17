@@ -2,6 +2,13 @@
 
 Changelog for the Human Reference Atlas (HRA) Jupyter Widgets
 
+## 0.4.1 - 2024-12-17
+
+### Added in 0.4.1
+
+- Support Cell Distance Explorer v1.0.0
+- Support Node Distance Visualization v1.0.0
+
 ## 0.4.0 - 2024-09-30
 
 ### Added in 0.4.0
