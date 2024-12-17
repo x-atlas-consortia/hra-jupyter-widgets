@@ -14,10 +14,7 @@ class CdeVisualization(HraAppIframeWidget):
     """Displays the CDE visualization application."""
 
     _tag_name = "cde-visualization"
-    _scripts = [
-        "https://cdn.humanatlas.io/ui/cde-visualization-wc/polyfills.js",
-        "https://cdn.humanatlas.io/ui/cde-visualization-wc/main.js",
-    ]
+    _scripts = ["https://cdn.humanatlas.io/ui/cde-visualization-wc/wc.js"]
     _styles = ["https://cdn.humanatlas.io/ui/cde-visualization-wc/styles.css"]
 
     nodes = Attribute(
@@ -25,14 +22,27 @@ class CdeVisualization(HraAppIframeWidget):
         required=True,
         help="Nodes to display, either an url or a list of nodes.",
     ).tag(to_json=_as_string_or_json)
-    node_target_key = Attribute(
-        Unicode(None, allow_none=True), help="Column name of node targets."
+    node_keys = Attribute(
+        Unicode(None, allow_none=True) | Dict(),
+        help="Mapping between expected columns and columns in the nodes data.",
     )
-    node_target_value = Attribute(Unicode(None, allow_none=True), help="Anchor node.")
+    node_target_selector = Attribute(
+        Unicode(None, allow_none=True), help="Target type used when computing edges."
+    )
+    node_target_key = Attribute(
+        Unicode(None, allow_none=True), help="DEPRECATED: Column name of node targets."
+    )
+    node_target_value = Attribute(
+        Unicode(None, allow_none=True), help="DEPRECATED: Anchor node."
+    )
     edges = Attribute(
         Unicode(None, allow_none=True) | List(),
         help="Edges between nodes, either an url or a list of edges.",
     ).tag(to_json=_as_string_or_json)
+    edge_keys = Attribute(
+        Unicode(None, allow_none=True) | Dict(),
+        help="Mapping between expected columns and columns in the edges data.",
+    )
     max_edge_distance = Attribute(
         Integer(None, allow_none=True),
         help="Max distance between nodes when calculating edges.",
@@ -40,11 +50,16 @@ class CdeVisualization(HraAppIframeWidget):
     color_map = Attribute(
         Unicode(None, allow_none=True) | List(), help="Color map url."
     )
+    color_map_keys = Attribute(
+        Unicode(None, allow_none=True) | Dict(),
+        help="Mapping between expected columns and columns in the color map data."
+    )
     color_map_key = Attribute(
-        Unicode(None, allow_none=True), help="Column name of the node targets."
+        Unicode(None, allow_none=True),
+        help="DEPRECATED: Column name of the node targets.",
     )
     color_map_value_key = Attribute(
-        Unicode(None, allow_none=True), help="Column name of colors."
+        Unicode(None, allow_none=True), help="DEPRECATED: Column name of colors."
     )
     metadata = Attribute(
         Unicode(None, allow_none=True) | Dict(),
