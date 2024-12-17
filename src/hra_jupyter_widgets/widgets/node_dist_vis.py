@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import typing as t
 
-from traitlets import Bool, Dict, Enum, Integer, List, Unicode
+from traitlets import Bool, Dict, Enum, Integer, List, Unicode, default
 
 from ..trait_types import Attribute, Event
 from .hra_app import HraAppWidget
@@ -19,6 +19,10 @@ class NodeDistVis(HraAppWidget):
     _tag_name = "hra-node-dist-vis"
     _scripts = ["https://cdn.humanatlas.io/ui/node-dist-vis-wc/wc.js"]
     _styles = []
+
+    @default("height")
+    def _height_default(self) -> str:
+        return "700px"
 
     mode = Attribute(
         Enum(["expore", "inspect", "select"], default_value=None, allow_none=True),
